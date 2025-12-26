@@ -1,0 +1,28 @@
+name: E2E Automation Suite
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Test Code
+        uses: actions/checkout@v4
+
+      - name: Run Tests via Docker Compose
+        run: docker-compose up --build --exit-code-from cypress
+
+      - name: Upload Test Artifacts (Videos/Screenshots)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-evidence
+          path: |
+            cypress/videos
+            cypress/screenshots
+          retention-days: 5
