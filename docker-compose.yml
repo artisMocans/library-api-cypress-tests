@@ -1,11 +1,9 @@
-version: '3.8'
-
 services:
   library-api:
-    image: node:18-alpine
+    image: node:20-alpine
     working_dir: /app
     command: >
-      sh -c "apk add git && 
+      sh -c "apk add --no-cache git && 
              git clone https://github.com/artisMocans/library-api.git . && 
              npm install && 
              npm run dev"
@@ -22,13 +20,18 @@ services:
     restart: always
 
   cypress:
-    image: cypress/included:13.6.1
+    image: cypress/base:18.16.0
     depends_on:
       - library-api
     environment:
       - CYPRESS_baseUrl=http://library-api:3000
+      - CYPRESS_CACHE_FOLDER=/e2e/.cache/Cypress
     working_dir: /e2e
     volumes:
       - ./:/e2e
+    entrypoint: []
     command: >
-      bash -c "npm install && npx cypress run"
+      bash -c "npm install && 
+               npx cypress install && 
+               npx wait-on http://library-api:3000/health -t 60000 && 
+               npx cypress run"

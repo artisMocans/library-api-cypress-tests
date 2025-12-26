@@ -29,3 +29,16 @@ dist-ssr
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Ignore Cypress binary cache
+.cache/
+
+# Ignore dependencies
+node_modules/
+
+# Ignore environment variables
+.env
+
+# Ignore Cypress videos/screenshots
+cypress/videos/
+cypress/screenshots/
